@@ -7,7 +7,9 @@
 
 This is a research codebase to monitor the training dynamics of small-to-medium neural networks. Log arbitrary metrics of activations, gradients, and parameters to Weights & Biases with a few lines of code!
 
-We also provide an implementation of the refined coordinate check (RCC), a diagnostic that decomposes how layer activations change during training into *effective updates* and *propagating updates*. See also the NeurIPS 2025 paper ["On the Surprising Effectiveness of Large Learning Rates under Standard Width Scaling"](https://arxiv.org/abs/2505.22491) (Haas et al., 2025).
+We also provide an implementation of the refined coordinate check (RCC), a diagnostic that decomposes activations change into *effective updates* and *propagating updates*. This package has been used for the experiments in:
+- Haas et al., [*On the Surprising Effectiveness of Large Learning Rates under Standard Width Scaling*](https://arxiv.org/abs/2505.22491), NeurIPS 2025
+- Vankadara et al., [*How to Scale Mixture-of-Experts: From muP to the Maximally Scale-Stable Parameterization*](https://arxiv.org/abs/2605.14200), preprint, 2026
 
 ⚡For a complete working example, see how the monitor can be integrated into [nanoGPT](https://github.com/tml-tuebingen/nanoGPT-monitored).⚡
 

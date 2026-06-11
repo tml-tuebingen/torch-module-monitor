@@ -7,9 +7,21 @@
 
 This is a research codebase to monitor the training dynamics of small-to-medium neural networks. Log arbitrary metrics of activations, gradients, and parameters to Weights & Biases with a few lines of code!
 
-We also provide an implementation of the refined coordinate check (RCC) from the NeurIPS 2025 paper ["On the Surprising Effectiveness of Large Learning Rates under Standard Width Scaling"](https://arxiv.org/abs/2505.22491) (Haas et al., 2025).
+We also provide an implementation of the refined coordinate check (RCC), a diagnostic that decomposes how layer activations change during training into *effective updates* and *propagating updates*. See also the NeurIPS 2025 paper ["On the Surprising Effectiveness of Large Learning Rates under Standard Width Scaling"](https://arxiv.org/abs/2505.22491) (Haas et al., 2025).
 
 ⚡For a complete working example, see how the monitor can be integrated into [nanoGPT](https://github.com/tml-tuebingen/nanoGPT-monitored).⚡
+
+## Contents
+
+- [Installation](#installation)
+- [Features](#features)
+- [Basic Usage](#basic-usage)
+- [⭐ **Refined Coordinate Check (RCC)**](#refined-coordinate-check) — decompose activation changes into effective updates vs. propagating updates
+- [Reference Module Comparison](#reference-module-comparison) — compare activations and parameters against a model at initialization
+- [Patterns](#patterns) — metrics for activations, parameters, and gradients
+- [Complete Examples](#complete-examples)
+- [Integration with Weights & Biases](#integration-with-weights--biases)
+- [Citation](#citation)
 
 ### Who is this package for?
 
@@ -31,8 +43,8 @@ pip install torch-module-monitor
 - Monitor the internals of the attention operation (query/key/value tensor metrics, attention entropy)
 - Aggregation of activation metrics across micro-batches
 
-**2. Perform the Refined Coordinate Check (RCC) from https://arxiv.org/abs/2505.22491**
-- We provide an implementation of the refined coordinate check.
+**2. Perform the Refined Coordinate Check (RCC)**
+- We provide an implementation of the refined coordinate check. See also [Haas et al., 2025](https://arxiv.org/abs/2505.22491).
 
 ---
 
@@ -360,7 +372,7 @@ Call `monitor.monitor_parameters()` to compute these metrics. They are logged as
 
 ### Refined Coordinate Check
 
-The Refined Coordinate Check (RCC) from [Haas et al., 2025](https://arxiv.org/abs/2505.22491) is an advanced diagnostic that builds on **Reference Module Comparison** (see above). While activation difference metrics compute simple differences like `||act - ref_act||`, RCC decomposes these changes into two components:
+The Refined Coordinate Check (RCC) is an advanced diagnostic that builds on **Reference Module Comparison** (see above). While activation difference metrics compute simple differences like `||act - ref_act||`, RCC decomposes these changes into two components:
 
 - **(W_t - W_0) x_t**: Effective Updates
 - **W_0 (x_t - x_0)**: Propagating Updates
@@ -427,8 +439,8 @@ for step, (inputs, targets) in enumerate(dataloader):
 2. **Additional Forward Passes**: The `refined_coordinate_check()` method performs **extra forward passes** internally to compute W_0(x_t). These are done with `torch.no_grad()`, but be aware of the computational cost (~2x forward passes per step).
 
 3. **Logged Metrics**: RCC logs metrics under these prefixes:
-   - `RCC (W_t-W_0)x_t/{module}/l2norm` - Change due to weight updates
-   - `RCC W_0(x_t-x_0)/{module}/l2norm` - Change due to input changes
+   - `RCC (W_t-W_0)x_t/{module}/l2norm` - Effective updates (change due to weight updates)
+   - `RCC W_0(x_t-x_0)/{module}/l2norm` - Propagating updates (change due to input changes)
    - `RCC x_t/{module}/l2norm` - Current input norm
    - `RCC (x_t-x_0)/{module}/l2norm` - Input change norm
 
